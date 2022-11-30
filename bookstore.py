@@ -1,6 +1,24 @@
 import os
+import sys
+from Inventory import *
 
 def main():
+    
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="Methods-Project-DB"
+        )
+        print("Connected to Database")
+
+    except:
+        print("Couldn't Connect to Database")
+        sys.exit()
+    
+    inv = Inventory(connection)
+    
     cnt = 1
     while cnt == 1:
         print("Welcome to bookstore!")
