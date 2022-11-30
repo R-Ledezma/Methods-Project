@@ -26,8 +26,11 @@ class Inventory:
 
         self.cursor.execute(query,details)
 
-        current = self.cursor.fetchall()[0][0]
-
+        try:
+            current = self.cursor.fetchall()[0][0]
+        except:
+            print("Invalid ISBN")
+            return
 
         if int(current) == 0 and num > 0:
             print("Cannot checkout. Item in cart is out of stock")
