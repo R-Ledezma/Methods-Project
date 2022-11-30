@@ -111,3 +111,30 @@ class User:
         self.connection.commit()
         self.cursor.execute("SELECT CartID FROM Cart WHERE UserID = '" + str(self.UserID) + "' AND Purchased = '0'")
         self.CartID = self.cursor.fetchone()[0]
+
+    def viewOrderHistory(self):
+        # find all carts with user id
+        print("Order History: \n")
+        self.cursor.execute("SELECT CartID FROM Cart WHERE UserID = '" + str(self.UserID) + "' AND Purchased = '1'")
+        orders = self.cursor.fetchall()
+        count = 1
+        totalPrice = 0
+        for x in orders:
+            self.cursor.execute("SELECT ISBN, Quantity FROM CartItem WHERE CartID = '" + str(x[0]) + "'")
+            order = self.cursor.fetchall()
+            #print(order)
+            print("ORDER: " + str(count))
+            orderPrice = 0
+            # Display all carts
+            for y in order:
+                self.cursor.execute("SELECT Title, Price FROM Inventory WHERE ISBN = '" + str(y[0]) +"'")
+                tp = self.cursor.fetchall()
+                print("Title: " + str(tp[0][0]) + " Quantity: " + str(y[1]) + " Price: " + str(tp[0][1] * y[1]) + "\n")
+                totalPrice += tp[0][1] * y[1]
+                orderPrice += tp[0][1] * y[1]
+                #quan = y[1]
+                #title = tp[0]
+                #price = tp[1]
+            print("ORDER TOTAL: $" + str(orderPrice) + "\n")
+            count += 1
+        print("TOTAL PRICE: $" + str(totalPrice) + "\n")
