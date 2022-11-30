@@ -6,7 +6,7 @@ class Cart:
     def __init__(self, connection, cartID):
         self.connection = connection
         self.cursor = connection.cursor()
-        self.cartID = cartID
+        self.cartID = str(cartID)
 
     def setCart(self, cartID):
         self.cartID = cartID
@@ -42,8 +42,13 @@ class Cart:
         self.cursor.execute(query)
         self.connection.commit()
 
+    def clearCart(self):
+        query = "DELETE FROM CartItem WHERE CartID =" + str(self.cartID)
+        self.cursor.execute(query)
+        self.connection.commit()
+
     def viewCart(self):
-        self.cursor.execute("SELECT ISBN, Quantity FROM CartItem WHERE CartID = " +  self.cartID)
+        self.cursor.execute("SELECT ISBN, Quantity FROM CartItem WHERE CartID = " + self.cartID)
         items = self.cursor.fetchall()
         print("\nCART CONTENTS: \n")
 
