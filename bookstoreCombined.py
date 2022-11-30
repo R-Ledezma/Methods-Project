@@ -77,7 +77,7 @@ class Cart:
     def __init__(self, connection, cartID):
         self.connection = connection
         self.cursor = connection.cursor()
-        self.cartID = cartID
+        self.cartID = str(cartID)
 
     def setCart(self, cartID):
         self.cartID = cartID
@@ -107,6 +107,31 @@ class Cart:
                 self.cursor.execute(query)
                 self.connection.commit()
 
+
+    def removeItemFromCart(self, ISBN):
+        query = "DELETE FROM CartItem WHERE ISBN =" + str(ISBN) + " AND CartID =" + str(self.cartID)
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def clearCart(self):
+        query = "DELETE FROM CartItem WHERE CartID =" + str(self.cartID)
+        self.cursor.execute(query)
+        self.connection.commit()
+
+    def viewCart(self):
+        self.cursor.execute("SELECT ISBN, Quantity FROM CartItem WHERE CartID = " + self.cartID)
+        items = self.cursor.fetchall()
+        print("\nCART CONTENTS: \n")
+
+        total = 0
+
+        for x in items:
+            self.cursor.execute("SELECT Title, Price FROM Inventory WHERE ISBN = " + x[0] + "")
+            title = self.cursor.fetchall()
+            print(title[0][0] + " | Quantity: " + str(x[1]) + " | Price: $" + str(x[1] * title[0][1]))
+            total += (x[1]*title[0][1])
+
+        print("TOTAL: $" + str(total) + "\n")
 
     def removeItemFromCart(self, ISBN):
         query = "DELETE FROM CartItem WHERE ISBN =" + str(ISBN) + " AND CartID =" + str(self.cartID)
@@ -143,30 +168,8 @@ class Inventory:
     def addItem(self,ISBN,Quantity,Price,Author,Title):
         details = (str(ISBN),str(Quantity), str(Price),str(Author),str(Title))
         query = "INSERT INTO Inventory (ISBN,Quantity,Price,Author,Title) VALUES (%s, %s, %s, %s, %s)"
-        self.cursor.execute(query,details)
+        self.cursor.execute(query, details)
         self.connection.commit()
-
-    def updateQuantity(self,ISBN,num):
-        details = (str(ISBN),)
-        query = "SELECT Quantity FROM Inventory WHERE ISBN = %s"
-
-        self.cursor.execute(query,details)
-
-        try:
-            current = self.cursor.fetchall()[0][0]
-        except:
-            print("Invalid ISBN")
-            return
-
-        if int(current) == 0 and num > 0:
-            print("Cannot checkout. Item in cart is out of stock")
-            return False
-        else:
-            current = int(current) - num;
-            details = (str(current), str(ISBN))
-            query = "UPDATE Inventory SET Quantity='" + str(current) + "' WHERE ISBN = '" + str(ISBN) + "'"
-            self.cursor.execute(query)
-            self.connection.commit()
 
 
 
