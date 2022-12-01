@@ -5,6 +5,15 @@ import sys
 import sqlite3
 from sqlite3.dbapi2 import Connection, Cursor, paramstyle
 
+def create_user(first_name, last_name, username, password, credit_card, shipping_address, phone_number):
+
+    tuple = (phone_number, shipping_address, password, first_name, last_name,username, credit_card)
+    queryStr = 'INSERT INTO Users (PhoneNumber,ShippingAddress, Password, FirstName, LastName, Username, CreditCard) VALUES (%s,%s,%s,%s,%s,%s,%s)'
+    try:
+        cursor.execute(queryStr, tuple)
+        connection.commit()
+    except:
+        pass
 class User:
     def __init__(self, connection, username):
 
@@ -228,15 +237,15 @@ def main():
     except:
         print("Couldn't Connect to Database")
         sys.exit()
-    
+    cursor = connection.cursor()
     inv = Inventory(connection)
     
-    
+    loginCheck == False
 
     cnt = 1
     while cnt == 1:
         print("Welcome to bookstore!")
-        while cnt ==1:
+        while loginCheck == False:
             try:
                 acclogin = input(str('do you have an account?(Y/N, or Quit to exit) '))
                 if acclogin == "quit" or acclogin =="Quit":
@@ -246,18 +255,35 @@ def main():
                     print("Lets make one")
                     new_uname = input(str("Enter A Unique UserName \n"))
                     new_password = input(str("Enter A Password \n" ))
-                    first_name = input(str("Enter Your first name"))
-                    last_name = input(str("Enter your last name"))
+                    f_name = input(str("Enter Your first name"))
+                    l_name = input(str("Enter your last name"))
                     address = input(str("enter your address"))
                     payinfo = input(str("Please enter your card number"))
+                    phoneNum = input(str("Please enter your phone number"))
+                    create_user(f_name, l_name, new_uname, new_password, payinfo, adress, phoneNum) 
                 elif acclogin == "Y":
-                    uname = input(str("Please enter your username"))
-                    password = input(str("please enter your password"))
+                   liusername=input(str("Enter Your UserName \n"))
+                   lipassword=input(str("Enter Your Password \n" ))
+                   query = "SELECT Password FROM Users WHERE Username = '" + str(liusername) + "'"
+                   cursor.execute(query)
+                   str(password = cursor.fetchall()[0])
+                   if lipassword == password:
+                       loginCheck = True
+                   else:
+                       acclogin == 'Y'
+                       print("incorrect password or username")
+                   
+                   
+                 
                 else:   
                     print("error please try again")
             except ValueError:
                 print('error please try again')
                 continue
+        currentUser = User(connection, liusername)
+        cart = Cart(connection, currentUser.getCartID())
+        print("What would you like to do. \n 1.View all books \n 2.Add Item to cart. \n 3.Remove Items from cart \n 4.Checkout \n 5.view order history \n 6.edit user account \n 7.delete account")  
+        
                              
         
     
