@@ -30,26 +30,22 @@ class User:
         self.connection.commit()
 
     def editShipping(self):
-        new_address = input(str("Enter your new Shipping Address: "))
-        new_billing_address = input(str("Enter your new Billing Address: "))
-        tuple = (new_address, self.UserID)
-        self.cursor.execute('''UPDATE Users SET shipping_address = ? WHERE rowid=?''', tuple)
+        newAddress = input(str("Enter your new Shipping Address: "))
+        self.cursor.execute("UPDATE Users SET ShippingAddress = '" + newAddress + "' WHERE UserID = '" + str(self.UserID) +"'")
         self.connection.commit()
-        print("New address: " + new_address + "\n")
+        print("New address: " + newAddress + "\n")
 
     def editPayMethod(self):
-        new_card = input(str("Enter your new payment info: "))
-        tuple = (new_card, self.UserID,)
-        self.cursor.execute('''UPDATE Users SET credit_card = ? WHERE rowid=?''', tuple)
+        newCard = input(str("Enter your new payment info: "))
+        self.cursor.execute("UPDATE Users SET CreditCard = '" + newCard + "' WHERE UserID = '" + str(self.UserID) + "'")
         self.connection.commit()
-        print("New credit card info: " + new_card + "\n")
+        print("New credit card info: " + newCard + "\n")
 
     def editPassword(self):
-        new_password = input(str("Enter your new Password: "))
-        tuple = (new_password, self.UserID,)
-        self.connection.execute('''UPDATE Users SET password = ? WHERE rowid=?''', tuple)
+        newPassword = input(str("Enter your new Password: "))
+        self.cursor.execute("UPDATE Users SET Password = '" + newPassword + "' WHERE UserID = '" + str(self.UserID) + "'")
         self.connection.commit()
-        print("New password is : " + new_password + "\n")
+        print("New password is : " + newPassword + "\n")
 
     def checkout(self):
         # update inventory to reflect purchases
@@ -80,6 +76,7 @@ class User:
 
 
         return True
+
 
     def updateQuantity(self,ISBN,num):
         details = (str(ISBN),)
