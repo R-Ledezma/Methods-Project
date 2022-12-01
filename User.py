@@ -20,15 +20,16 @@ class User:
         else:
             self.createCart()
 
-
     def getCartID(self):
         return self.CartID
 
-    def delete_user(self):
-        self.cursor.execute("DELETE FROM Users WHERE UserID=?", (self.UserID,))
+    def deleteUser(self):
+        self.cursor.execute("DELETE FROM Cart WHERE UserID= '" + str(self.UserID) + "'")
+        self.connection.commit()
+        self.cursor.execute("DELETE FROM Users WHERE UserID= '" + str(self.UserID) + "'")
         self.connection.commit()
 
-    def edit_shipping(self):
+    def editShipping(self):
         new_address = input(str("Enter your new Shipping Address: "))
         new_billing_address = input(str("Enter your new Billing Address: "))
         tuple = (new_address, self.UserID)
@@ -36,14 +37,14 @@ class User:
         self.connection.commit()
         print("New address: " + new_address + "\n")
 
-    def edit_pay_method(self):
+    def editPayMethod(self):
         new_card = input(str("Enter your new payment info: "))
         tuple = (new_card, self.UserID,)
         self.cursor.execute('''UPDATE Users SET credit_card = ? WHERE rowid=?''', tuple)
         self.connection.commit()
         print("New credit card info: " + new_card + "\n")
 
-    def edit_password(self):
+    def editPassword(self):
         new_password = input(str("Enter your new Password: "))
         tuple = (new_password, self.UserID,)
         self.connection.execute('''UPDATE Users SET password = ? WHERE rowid=?''', tuple)
@@ -80,7 +81,6 @@ class User:
 
         return True
 
-
     def updateQuantity(self,ISBN,num):
         details = (str(ISBN),)
         query = "SELECT Quantity FROM Inventory WHERE ISBN = %s"
@@ -102,7 +102,6 @@ class User:
             query = "UPDATE Inventory SET Quantity='" + str(current) + "' WHERE ISBN = '" + str(ISBN) + "'"
             self.cursor.execute(query)
             self.connection.commit()
-
 
     def createCart(self):
         details = (str(self.UserID), "0")
@@ -129,7 +128,7 @@ class User:
             for y in order:
                 self.cursor.execute("SELECT Title, Price FROM Inventory WHERE ISBN = '" + str(y[0]) +"'")
                 tp = self.cursor.fetchall()
-                print("Title: " + str(tp[0][0]) + " Quantity: " + str(y[1]) + " Price: " + str(tp[0][1] * y[1]) + "\n")
+                print("Title: " + str(tp[0][0]) + " Quantity: " + str(y[1]) + " Price: $" + str(tp[0][1] * y[1]) + "\n")
                 totalPrice += tp[0][1] * y[1]
                 orderPrice += tp[0][1] * y[1]
                 #quan = y[1]

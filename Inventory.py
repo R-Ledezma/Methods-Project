@@ -8,12 +8,12 @@ class Inventory:
         self.cursor = connection.cursor()
 
     def showInventory(self):
-        print("Available Books: \n")
+        print("\nAvailable Books: \n")
         self.cursor.execute("SELECT * FROM Inventory")
         contents = self.cursor.fetchall()
         for x in contents:
-            print("ISBN: " ,x[0], "Quantity: ", x[1], "| Price: $", x[2], "| Author: ", x[3], "| Title: ", x[4], "\n")
-
+            print("ISBN: " ,x[0], "Quantity: ", x[1], "| Price: $", x[2], "| Author: ", x[3], "| Title: ", x[4])
+        print("\n")
     def addItem(self,ISBN,Quantity,Price,Author,Title):
         details = (str(ISBN),str(Quantity), str(Price),str(Author),str(Title))
         query = "INSERT INTO Inventory (ISBN,Quantity,Price,Author,Title) VALUES (%s, %s, %s, %s, %s)"
